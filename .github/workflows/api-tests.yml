@@ -6,6 +6,20 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Needed to publish the Allure report to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time; a newer run replaces a waiting one
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REPORT_URL: https://kanhiyaog1997.github.io/restassured-api-automation
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,6 +44,15 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports
 
+      # Copy trend history from the currently published report so charts show past runs
+      - name: Restore Allure history
+        if: always()
+        run: |
+          mkdir -p target/allure-results/history
+          for f in history.json history-trend.json duration-trend.json categories-trend.json retry-trend.json; do
+            curl -sf "$REPORT_URL/history/$f" -o "target/allure-results/history/$f" || echo "no previous $f"
+          done
+
       - name: Generate Allure report
         if: always()
         run: mvn allure:report
@@ -40,3 +63,22 @@ jobs:
         with:
           name: allure-report
           path: target/site/allure-maven-plugin
+
+      - name: Upload report for GitHub Pages
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/site/allure-maven-plugin
+
+  # Publishes the report from main (also when tests fail, since that's when it's most useful)
+  deploy-report:
+    needs: test
+    if: always() && needs.test.result != 'cancelled' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
