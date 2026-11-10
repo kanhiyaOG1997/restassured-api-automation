@@ -1,5 +1,10 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Restful Booker API Suite" verbose="1">
+    <test name="Smoke Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.SmokeTest"/>
+        </classes>
+    </test>
     <test name="Auth Tests">
         <classes>
             <class name="com.kanhaiya.api.tests.AuthTest"/>
@@ -13,6 +18,16 @@
     <test name="Booking Edge Case Tests">
         <classes>
             <class name="com.kanhaiya.api.tests.BookingEdgeCaseTest"/>
+        </classes>
+    </test>
+    <test name="Sanity Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.SanityTest"/>
+        </classes>
+    </test>
+    <test name="Booking E2E Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.BookingE2ETest"/>
         </classes>
     </test>
 </suite>
