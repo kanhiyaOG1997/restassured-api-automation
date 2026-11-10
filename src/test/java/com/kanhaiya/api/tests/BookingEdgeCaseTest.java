@@ -31,18 +31,6 @@ import static org.hamcrest.Matchers.*;
 @Severity(SeverityLevel.NORMAL)
 public class BookingEdgeCaseTest extends BaseTest {
 
-    // Helper: creates a booking and returns its id
-    private int createBooking(Booking booking) {
-        return given()
-                .spec(requestSpec)
-                .body(booking)
-        .when()
-                .post("/booking")
-        .then()
-                .statusCode(200)
-                .extract().path("bookingid");
-    }
-
     // Helper: builds the Base64 part of a Basic auth header from config credentials
     private String basicAuthValue() {
         String credentials = ConfigReader.get("username") + ":" + ConfigReader.get("password");

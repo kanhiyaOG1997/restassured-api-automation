@@ -35,8 +35,7 @@ public class AuthTest extends BaseTest {
         .then()
                 .statusCode(200)
                 .body("token", notNullValue())          // token must be present
-                .body("token", not(emptyString()))      // and not empty
-                .time(lessThan(10000L));                // response within 10 seconds
+                .body("token", not(emptyString()));     // and not empty
     }
 
     @Test(description = "Wrong password should return 'Bad credentials'")

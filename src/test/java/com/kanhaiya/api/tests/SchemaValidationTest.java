@@ -25,18 +25,6 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
 @Severity(SeverityLevel.NORMAL)
 public class SchemaValidationTest extends BaseTest {
 
-    // Helper: creates a booking and returns its id
-    private int createBooking() {
-        return given()
-                .spec(requestSpec)
-                .body(TestDataBuilder.validBooking())
-        .when()
-                .post("/booking")
-        .then()
-                .statusCode(200)
-                .extract().path("bookingid");
-    }
-
     @Test(groups = "regression", description = "POST /auth (valid) matches auth-token schema")
     public void authTokenSchema() {
         given()
@@ -77,7 +65,7 @@ public class SchemaValidationTest extends BaseTest {
 
     @Test(groups = "regression", description = "GET /booking/{id} matches booking schema")
     public void getBookingSchema() {
-        int id = createBooking();                   // our own booking, so the data is known to be clean
+        int id = createBooking(TestDataBuilder.validBooking());                   // our own booking, so the data is known to be clean
 
         given()
                 .spec(requestSpec)
@@ -102,7 +90,7 @@ public class SchemaValidationTest extends BaseTest {
 
     @Test(groups = "regression", description = "PUT /booking/{id} response matches booking schema")
     public void updateBookingSchema() {
-        int id = createBooking();
+        int id = createBooking(TestDataBuilder.validBooking());
 
         given()
                 .spec(requestSpec)
@@ -118,7 +106,7 @@ public class SchemaValidationTest extends BaseTest {
 
     @Test(groups = "regression", description = "PATCH /booking/{id} response matches booking schema")
     public void patchBookingSchema() {
-        int id = createBooking();
+        int id = createBooking(TestDataBuilder.validBooking());
 
         given()
                 .spec(requestSpec)

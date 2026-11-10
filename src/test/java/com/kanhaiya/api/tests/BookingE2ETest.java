@@ -29,18 +29,6 @@ import static org.hamcrest.Matchers.*;
 @Severity(SeverityLevel.CRITICAL)
 public class BookingE2ETest extends BaseTest {
 
-    // Helper: creates a booking and returns its id
-    private int createBooking(Booking booking) {
-        return given()
-                .spec(requestSpec)
-                .body(booking)
-        .when()
-                .post("/booking")
-        .then()
-                .statusCode(200)
-                .extract().path("bookingid");
-    }
-
     // Helper: deletes a booking with the given token (201 = deleted on this API)
     private void deleteBooking(int id, String authToken) {
         given()
