@@ -63,7 +63,7 @@ mvn allure:serve      # build the report and open it in your browser
 mvn allure:report     # or save it to target/site/allure-maven-plugin
 ```
 
-The latest report from `main` is published to [GitHub Pages](https://kanhiyaog1997.github.io/restassured-api-automation), with trend charts across runs.
+The latest report from `main` is published to [GitHub Pages](https://kanhiyaog1997.github.io/restassured-api-automation).
 For pull requests, download the **allure-report** artifact from the workflow run, unzip it and serve the
 folder (e.g. `npx http-server` inside it). Opening the HTML file directly from disk shows an
 empty report because browsers block it from loading its data files.
