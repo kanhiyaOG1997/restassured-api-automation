@@ -1,12 +1,6 @@
 {
   "name": "RestAssured API Automation",
-  "image": "mcr.microsoft.com/devcontainers/java:1-21-bookworm",
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "none",
-      "installMaven": "true"
-    }
-  },
+  "image": "maven:3.9.9-eclipse-temurin-21",
   "postCreateCommand": "mvn -q -DskipTests test-compile",
   "customizations": {
     "vscode": {
