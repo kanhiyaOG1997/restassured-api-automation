@@ -43,6 +43,20 @@ testng.xml                             # suite, parallel setup, retry listener
 .github/workflows/api-tests.yml        # CI
 ```
 
+## Getting started
+
+You need **Java 21** (older versions won't compile it) and **Maven 3.6.3 or newer**. Check with `java -version` and `mvn -v`.
+
+```bash
+git clone https://github.com/kanhiyaOG1997/restassured-api-automation.git
+cd restassured-api-automation
+mvn clean test
+```
+
+That's it. The API is public and the config is already in the repo, so there are no accounts or keys to set up. The first run takes a bit longer while Maven downloads dependencies.
+
+If you'd rather not install anything, the [live report](https://kanhiyaog1997.github.io/restassured-api-automation) shows the latest run from `main`, and the Actions tab shows every CI run.
+
 ## Running the tests
 
 ```bash
