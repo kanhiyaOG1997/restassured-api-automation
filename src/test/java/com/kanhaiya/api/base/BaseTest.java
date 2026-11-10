@@ -20,7 +20,8 @@ public class BaseTest {
     protected RequestSpecification requestSpec;
     protected String token;
 
-    @BeforeClass
+    // alwaysRun = true so setup still runs when tests are filtered by group
+    @BeforeClass(alwaysRun = true)
     public void setUp() {
         // Print request + response details only when a validation fails (keeps logs clean)
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
@@ -28,7 +29,7 @@ public class BaseTest {
         requestSpec = new RequestSpecBuilder()
                 .setBaseUri(ConfigReader.get("baseUrl"))
                 .setContentType(ContentType.JSON)   // Content-Type: application/json
-                .setAccept("application/json")      // Accept: application/json
+                .setAccept("application/json")      // exact value; ContentType.JSON sends a list and POST /booking returns 418
                 .build();
 
         token = generateToken();
