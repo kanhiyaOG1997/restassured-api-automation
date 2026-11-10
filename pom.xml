@@ -39,6 +39,13 @@
             <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- JSON Schema Validator: checks response structure against schema files -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${restassured.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Allure TestNG: records test results for the Allure HTML report -->
         <dependency>
             <groupId>io.qameta.allure</groupId>

@@ -29,6 +29,16 @@
             <class name="com.kanhaiya.api.tests.SanityTest"/>
         </classes>
     </test>
+    <test name="Schema Validation Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.SchemaValidationTest"/>
+        </classes>
+    </test>
+    <test name="Booking Data-Driven Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.BookingDataDrivenTest"/>
+        </classes>
+    </test>
     <test name="Booking E2E Tests">
         <classes>
             <class name="com.kanhaiya.api.tests.BookingE2ETest"/>
