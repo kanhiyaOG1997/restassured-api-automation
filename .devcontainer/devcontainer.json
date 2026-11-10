@@ -1,0 +1,10 @@
+{
+  "name": "RestAssured API Automation",
+  "image": "maven:3.9.9-eclipse-temurin-21",
+  "postCreateCommand": "mvn -q -DskipTests test-compile",
+  "customizations": {
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack"]
+    }
+  }
+}

@@ -46,6 +46,14 @@
             <version>${restassured.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- TestNG uses SLF4J for logging; this tells it to stay quiet instead of
+             printing a "Failed to load class StaticLoggerBinder" warning on every run -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Allure TestNG: records test results for the Allure HTML report -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
