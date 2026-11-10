@@ -115,7 +115,7 @@ The plain TestNG reports are in `target/surefire-reports/`.
 
 Restful-Booker has a few bugs. Where the real behaviour is wrong, the test asserts what the API actually does and has a `// Known API behaviour` comment, so the suite stays green and the bug is still written down:
 
-- Missing required fields or an empty body return **500** instead of 400
+- A missing `firstname` or an empty `{}` body returns **500** instead of 400
 - `totalprice: "abc"` is accepted and saved as `null`; `depositpaid: "yes"` is saved as `true`
 - PATCH on a missing booking and a second DELETE return **405** instead of 404
 - No validation that checkout is after checkin
