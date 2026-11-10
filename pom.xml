@@ -14,6 +14,7 @@
         <restassured.version>5.5.6</restassured.version>
         <testng.version>7.10.2</testng.version>
         <jackson.version>2.18.2</jackson.version>
+        <allure.version>2.29.1</allure.version>
     </properties>
 
     <dependencies>
@@ -38,6 +39,20 @@
             <version>${jackson.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Allure TestNG: records test results for the Allure HTML report -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Allure RestAssured: attaches every request and response to the report -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,6 +71,16 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                </configuration>
+            </plugin>
+            <!-- Allure Maven plugin: "mvn allure:serve" opens the report, "mvn allure:report" saves it -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.15.2</version>
+                <configuration>
+                    <reportVersion>2.30.0</reportVersion>
+                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,6 +1,7 @@
 package com.kanhaiya.api.base;
 
 import com.kanhaiya.api.utils.ConfigReader;
+import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.HttpClientConfig;
@@ -40,6 +41,7 @@ public class BaseTest {
         requestSpec = new RequestSpecBuilder()
                 .setBaseUri(ConfigReader.get("baseUrl"))
                 .setConfig(timeoutConfig)           // every request using this spec gets the timeouts
+                .addFilter(new AllureRestAssured())  // attach each request + response to the Allure report
                 .setContentType(ContentType.JSON)   // Content-Type: application/json
                 .setAccept("application/json")      // exact value; ContentType.JSON sends a list and POST /booking returns 418
                 .build();
