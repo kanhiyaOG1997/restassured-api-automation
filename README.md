@@ -41,6 +41,7 @@ src/test/resources/config.properties   # base URL and credentials
 src/test/resources/schemas/            # JSON schemas
 testng.xml                             # suite, parallel setup, retry listener
 .github/workflows/api-tests.yml        # CI
+.devcontainer/devcontainer.json        # Codespaces setup (Java 21 + Maven)
 ```
 
 ## Getting started
@@ -55,7 +56,11 @@ mvn clean test
 
 That's it. The API is public and the config is already in the repo, so there are no accounts or keys to set up. The first run takes a bit longer while Maven downloads dependencies.
 
-If you'd rather not install anything, the [live report](https://kanhiyaog1997.github.io/restassured-api-automation) shows the latest run from `main`, and the Actions tab shows every CI run.
+No Git? Use **Code → Download ZIP** on GitHub instead of `git clone`, unzip it, and run `mvn clean test` inside the folder.
+
+**Nothing installed at all?** Open it in GitHub Codespaces: **Code → Codespaces → Create codespace on main**. It comes with Java 21 and Maven already set up (see `.devcontainer/`), so once it opens just run `mvn clean test` in the terminal.
+
+Or just look at the [live report](https://kanhiyaog1997.github.io/restassured-api-automation), which shows the latest run from `main`, and the Actions tab for every CI run.
 
 ## Running the tests
 
