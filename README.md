@@ -72,7 +72,7 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 
 ## Test Scenarios
 
-**62 test runs** in total: 8 core, 12 edge cases, 3 smoke, 10 sanity, 4 end-to-end, 7 schema, 18 data-driven (4 methods).
+**61 test runs** in total: 8 core, 12 edge cases, 3 smoke, 9 sanity, 4 end-to-end, 7 schema, 18 data-driven (4 methods).
 
 | # | Test | Endpoint | Expected |
 |---|---|---|---|
@@ -99,31 +99,30 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 | 21 | Health check | GET /ping | 201 |
 | 22 | List all bookings | GET /booking | 200, non-empty list |
 | 23 | Get an existing booking | GET /booking/{id} | 200, firstname present |
-| 24 | Created booking matches all fields | POST + GET /booking | all 7 values match |
-| 25 | PATCH changes only one field | PATCH /booking/{id} | 200, other fields unchanged |
-| 26 | PUT is saved | PUT + GET /booking/{id} | GET shows new values |
-| 27 | Filter by firstname + lastname | GET /booking?firstname=&lastname= | 200, booking found |
-| 28 | Filter by checkout date | GET /booking?checkout= | 200, list |
-| 29 | Get non-existent booking | GET /booking/{id} | 404 |
-| 30 | Delete without token | DELETE /booking/{id} | 403 |
-| 31 | PATCH without token | PATCH /booking/{id} | 403 |
-| 32 | PUT with invalid token | PUT /booking/{id} | 403 |
-| 33 | Content-Type header | GET /booking/{id} | application/json |
-| 34 | E2E: full guest journey | auth → create → search → get → patch → delete | 404 at the end |
-| 35 | E2E: change dates | PUT + GET /booking?checkin= | booking found by new date |
-| 36 | E2E: one token, many actions | PATCH + DELETE x2 | all succeed |
-| 37 | E2E: 3 bookings lifecycle | create x3 → filter → delete x3 → filter | 3 found, then 0 |
-| 38 | Auth token schema | POST /auth | matches auth-token.json |
-| 39 | Auth error schema | POST /auth | matches auth-error.json |
-| 40 | Create booking schema | POST /booking | matches create-booking-response.json |
-| 41 | Get booking schema | GET /booking/{id} | matches booking.json |
-| 42 | Booking id list schema | GET /booking | matches booking-ids.json |
-| 43 | PUT response schema | PUT /booking/{id} | matches booking.json |
-| 44 | PATCH response schema | PATCH /booking/{id} | matches booking.json |
-| 45–49 | Valid booking variations (5 rows) | POST + GET /booking | saved exactly as sent |
-| 50–53 | Malformed JSON (4 rows) | POST /booking | 400 |
-| 54–58 | Invalid login variations (5 rows) | POST /auth | "Bad credentials", no token |
-| 59–62 | Known API issues (4 rows, group `known-issues`) | POST /booking | 500 / wrong types accepted |
+| 24 | PATCH changes only one field | PATCH /booking/{id} | 200, other fields unchanged |
+| 25 | PUT is saved | PUT + GET /booking/{id} | GET shows new values |
+| 26 | Filter by firstname + lastname | GET /booking?firstname=&lastname= | 200, booking found |
+| 27 | Filter by checkout date | GET /booking?checkout= | 200, list |
+| 28 | Get non-existent booking | GET /booking/{id} | 404 |
+| 29 | Delete without token | DELETE /booking/{id} | 403 |
+| 30 | PATCH without token | PATCH /booking/{id} | 403 |
+| 31 | PUT with invalid token | PUT /booking/{id} | 403 |
+| 32 | Content-Type header | GET /booking/{id} | application/json |
+| 33 | E2E: full guest journey | auth → create → search → get → patch → delete | 404 at the end |
+| 34 | E2E: change dates | PUT + GET /booking?checkin= | booking found by new date |
+| 35 | E2E: one token, many actions | PATCH + DELETE x2 | all succeed |
+| 36 | E2E: 3 bookings lifecycle | create x3 → filter → delete x3 → filter | 3 found, then 0 |
+| 37 | Auth token schema | POST /auth | matches auth-token.json |
+| 38 | Auth error schema | POST /auth | matches auth-error.json |
+| 39 | Create booking schema | POST /booking | matches create-booking-response.json |
+| 40 | Get booking schema | GET /booking/{id} | matches booking.json |
+| 41 | Booking id list schema | GET /booking | matches booking-ids.json |
+| 42 | PUT response schema | PUT /booking/{id} | matches booking.json |
+| 43 | PATCH response schema | PATCH /booking/{id} | matches booking.json |
+| 44–48 | Valid booking variations (5 rows) | POST + GET /booking | saved exactly as sent |
+| 49–52 | Malformed JSON (4 rows) | POST /booking | 400 |
+| 53–57 | Invalid login variations (5 rows) | POST /auth | "Bad credentials", no token |
+| 58–61 | Known API issues (4 rows, group `known-issues`) | POST /booking | 500 / wrong types accepted |
 
 ## Key Concepts Used
 
