@@ -4,6 +4,7 @@ import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.models.BookingDates;
 import com.kanhaiya.api.utils.ConfigReader;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
@@ -27,6 +28,12 @@ import static org.hamcrest.Matchers.*;
 @Severity(SeverityLevel.NORMAL)
 public class BookingDataDrivenTest extends BaseTest {
 
+    // Gives each data-driven run its own title in the Allure report,
+    // e.g. "Malformed JSON: trailing comma" instead of the same title for every row
+    private void setReportTitle(String title, String caseName) {
+        Allure.getLifecycle().updateTestCase(result -> result.setName(title + ": " + caseName));
+    }
+
     // ---------- Valid bookings: create, then GET returns the same data ----------
 
     // Each row: case name, booking to send
@@ -49,6 +56,7 @@ public class BookingDataDrivenTest extends BaseTest {
     @Test(groups = "regression", dataProvider = "validBookings",
             description = "Valid booking variations are saved exactly as sent")
     public void validBookingRoundTrip(String caseName, Booking sent) {
+        setReportTitle("Valid booking", caseName);
         int id = createBooking(sent);                   // shared helper from BaseTest
 
         // Read it back and compare every field
@@ -71,6 +79,7 @@ public class BookingDataDrivenTest extends BaseTest {
     @Test(groups = "regression", dataProvider = "malformedBodies",
             description = "Malformed JSON body returns 400 Bad Request")
     public void malformedJsonIsRejected(String caseName, String rawBody) {
+        setReportTitle("Malformed JSON", caseName);
         given()
                 .spec(requestSpec)
                 .body(rawBody)                      // a String is sent as-is, not converted to JSON
@@ -99,6 +108,7 @@ public class BookingDataDrivenTest extends BaseTest {
     @Test(groups = "regression", dataProvider = "invalidLogins",
             description = "Invalid login variations get 'Bad credentials' and no token")
     public void invalidLoginIsRejected(String caseName, Map<String, String> credentials) {
+        setReportTitle("Invalid login", caseName);
         given()
                 .spec(requestSpec)
                 .body(credentials)
@@ -147,6 +157,7 @@ public class BookingDataDrivenTest extends BaseTest {
             description = "Documents known API bugs in booking validation")
     public void knownValidationIssues(String caseName, Map<String, Object> body,
                                       int expectedStatus, String path, Object expectedValue) {
+        setReportTitle("Known API issue", caseName);
         // Known API behaviour: missing fields crash the server (500 instead of 400), and
         // wrong types are silently accepted ("abc" price saved as null, "yes" saved as true)
         var response = given()
