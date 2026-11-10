@@ -126,7 +126,7 @@ The four worst ones are in their own `known-issues` group, so they can be run (o
 
 Some choices I made and why:
 
-- **Every test creates its own data.** Nobody else's bookings on the public API are touched, so tests don't depend on each other. This is also what makes running them in parallel safe.
+- **Tests create their own data.** Apart from the CRUD chain in `BookingTest` (which is chained on purpose) and the smoke tests (which only read), every test creates the booking it needs. So tests don't depend on each other or on other people's data, and that's also what makes running them in parallel safe.
 
 - **Random test data.** Restful-Booker is shared by lots of people, so fixed names would clash with other people's bookings. `TestDataBuilder` generates fresh values each time. Tests that search by name use a unique suffix.
 
