@@ -19,7 +19,8 @@ API test automation framework for the public [Restful-Booker API](https://restfu
 
 ```
 src/test/java/com/kanhaiya/api
-├── base/BaseTest.java        # Common setup: request spec, auth token
+├── base/BaseTest.java        # Common setup: request spec, 15s timeout, auth token
+├── listeners/                # RetryAnalyzer + RetryListener (retry failed tests once)
 ├── utils/ConfigReader.java   # Reads config.properties
 ├── utils/TestDataBuilder.java # Random valid booking data
 ├── models/                   # POJOs: Booking, BookingDates
@@ -40,7 +41,11 @@ testng.xml                              # Test suite
 ```bash
 mvn clean test                    # all tests
 mvn clean test -Dgroups=smoke     # only smoke (also: sanity, regression, e2e)
+mvn clean test -DbaseUrl=https://other-env.example.com   # override any config value
 ```
+
+Any key in `config.properties` (`baseUrl`, `username`, `password`) can be overridden with `-Dkey=value`.
+A missing key fails fast with a clear error. Failed tests are retried once automatically.
 
 Reports are generated in `target/surefire-reports/`.
 
@@ -93,7 +98,8 @@ Reports are generated in `target/surefire-reports/`.
 - **Request Specification** to reuse base URL and headers
 - **Request chaining**: booking id from create is used in get/update/delete
 - **POJO serialization/deserialization** with Jackson
-- **Config-driven** test data (no hard-coded URLs)
+- **Config-driven** URLs and credentials, overridable with `-D` system properties
+- **Retry once** on failure via a TestNG listener (handles flaky public API)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
 - **Groups**: `smoke`, `sanity`, `regression`, `e2e`

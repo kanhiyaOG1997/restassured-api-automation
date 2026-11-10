@@ -6,6 +6,7 @@ import java.util.Properties;
 
 /**
  * Reads values from config.properties so URLs and credentials are not hard-coded in tests.
+ * Any value can be overridden from the command line, e.g. mvn test -DbaseUrl=https://other-env
  */
 public class ConfigReader {
 
@@ -24,8 +25,18 @@ public class ConfigReader {
         }
     }
 
-    // Returns the value for a key, e.g. get("baseUrl")
+    // Returns the value for a key, e.g. get("baseUrl").
+    // Order: -Dkey=value from the command line first, then config.properties.
     public static String get(String key) {
-        return properties.getProperty(key);
+        String value = System.getProperty(key);             // command-line override
+        if (value == null || value.isBlank()) {
+            value = properties.getProperty(key);            // fall back to the file
+        }
+        if (value == null || value.isBlank()) {
+            // Fail fast with a clear message instead of a NullPointerException later
+            throw new IllegalStateException("Missing config value for '" + key
+                    + "'. Add it to config.properties or pass -D" + key + "=...");
+        }
+        return value.trim();
     }
 }
