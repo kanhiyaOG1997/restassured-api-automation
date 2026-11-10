@@ -31,8 +31,11 @@ src/test/java/com/kanhaiya/api
     ├── BookingTest.java      # CRUD flow + negative test
     ├── BookingEdgeCaseTest.java # Boundary values, filters, known API quirks
     ├── SanityTest.java       # Each feature works correctly (PATCH, filters, auth)
+    ├── SchemaValidationTest.java  # Response structure vs JSON schemas
+    ├── BookingDataDrivenTest.java # @DataProvider-driven cases + known API issues
     └── BookingE2ETest.java   # Full user journeys across endpoints
 src/test/resources/config.properties   # Base URL and credentials
+src/test/resources/schemas/            # JSON schema files
 testng.xml                              # Test suite
 .github/workflows/api-tests.yml         # CI pipeline
 ```
@@ -41,7 +44,7 @@ testng.xml                              # Test suite
 
 ```bash
 mvn clean test                    # all tests
-mvn clean test -Dgroups=smoke     # only smoke (also: sanity, regression, e2e)
+mvn clean test -Dgroups=smoke     # only smoke (also: sanity, regression, e2e, known-issues)
 mvn clean test -DbaseUrl=https://other-env.example.com   # override any config value
 ```
 
@@ -66,7 +69,7 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 
 ## Test Scenarios
 
-**37 tests** in total: 8 core, 12 edge cases, 3 smoke, 10 sanity, 4 end-to-end.
+**62 test runs** in total: 8 core, 12 edge cases, 3 smoke, 10 sanity, 4 end-to-end, 7 schema, 18 data-driven (4 methods).
 
 | # | Test | Endpoint | Expected |
 |---|---|---|---|
@@ -107,6 +110,17 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 | 35 | E2E: change dates | PUT + GET /booking?checkin= | booking found by new date |
 | 36 | E2E: one token, many actions | PATCH + DELETE x2 | all succeed |
 | 37 | E2E: 3 bookings lifecycle | create x3 → filter → delete x3 → filter | 3 found, then 0 |
+| 38 | Auth token schema | POST /auth | matches auth-token.json |
+| 39 | Auth error schema | POST /auth | matches auth-error.json |
+| 40 | Create booking schema | POST /booking | matches create-booking-response.json |
+| 41 | Get booking schema | GET /booking/{id} | matches booking.json |
+| 42 | Booking id list schema | GET /booking | matches booking-ids.json |
+| 43 | PUT response schema | PUT /booking/{id} | matches booking.json |
+| 44 | PATCH response schema | PATCH /booking/{id} | matches booking.json |
+| 45–49 | Valid booking variations (5 rows) | POST + GET /booking | saved exactly as sent |
+| 50–53 | Malformed JSON (4 rows) | POST /booking | 400 |
+| 54–58 | Invalid login variations (5 rows) | POST /auth | "Bad credentials", no token |
+| 59–62 | Known API issues (4 rows, group `known-issues`) | POST /booking | 500 / wrong types accepted |
 
 ## Key Concepts Used
 
@@ -118,6 +132,8 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 - **Retry once** on failure via a TestNG listener (handles flaky public API)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
-- **Groups**: `smoke`, `sanity`, `regression`, `e2e`
+- **Groups**: `smoke`, `sanity`, `regression`, `e2e`, `known-issues`
+- **JSON schema validation** (required fields, types, `yyyy-MM-dd` date pattern, no extra fields)
+- **Data-driven tests** with TestNG `@DataProvider`
 - **Response-time** and header assertions
 - **CI** with GitHub Actions
