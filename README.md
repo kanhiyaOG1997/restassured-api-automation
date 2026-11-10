@@ -13,6 +13,7 @@ API test automation framework for the public [Restful-Booker API](https://restfu
 | TestNG 7.10 | Test runner (priority, dependencies, assertions) |
 | Jackson | POJO to JSON serialization and deserialization |
 | Maven | Build and dependency management |
+| Allure 2 | HTML report with every request and response attached |
 | GitHub Actions | CI: runs tests on every push |
 
 ## Project Structure
@@ -47,7 +48,21 @@ mvn clean test -DbaseUrl=https://other-env.example.com   # override any config v
 Any key in `config.properties` (`baseUrl`, `username`, `password`) can be overridden with `-Dkey=value`.
 A missing key fails fast with a clear error. Failed tests are retried once automatically.
 
-Reports are generated in `target/surefire-reports/`.
+## Reports
+
+**Allure** (recommended): every test shows its steps plus the full request and response.
+
+```bash
+mvn clean test        # run tests, raw results go to target/allure-results
+mvn allure:serve      # build the report and open it in your browser
+mvn allure:report     # or save it to target/site/allure-maven-plugin
+```
+
+In CI, download the **allure-report** artifact from the workflow run, unzip it and serve the
+folder (e.g. `npx http-server` inside it). Opening the HTML file directly from disk shows an
+empty report because browsers block it from loading its data files.
+
+Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 
 ## Test Scenarios
 
@@ -99,6 +114,7 @@ Reports are generated in `target/surefire-reports/`.
 - **Request chaining**: booking id from create is used in get/update/delete
 - **POJO serialization/deserialization** with Jackson
 - **Config-driven** URLs and credentials, overridable with `-D` system properties
+- **Allure reporting** with request/response attachments (via `AllureRestAssured` filter)
 - **Retry once** on failure via a TestNG listener (handles flaky public API)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
