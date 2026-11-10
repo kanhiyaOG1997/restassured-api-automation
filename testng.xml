@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Restful Booker API Suite" verbose="1">
+    <test name="Auth Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.AuthTest"/>
+        </classes>
+    </test>
+    <test name="Booking CRUD Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.BookingTest"/>
+        </classes>
+    </test>
+</suite>
