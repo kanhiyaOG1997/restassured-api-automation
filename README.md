@@ -16,7 +16,7 @@ Live Allure report (updated on every push to `main`): https://kanhiyaog1997.gith
 | Jackson | Converting POJOs to JSON and back |
 | Maven | Build and dependencies |
 | Allure 2 | HTML report with each request and response attached |
-| GitHub Actions | Runs the suite on every push and pull request |
+| GitHub Actions | Runs the suite on every push to `main` and on every pull request |
 
 ## Project structure
 
@@ -52,7 +52,7 @@ mvn clean test -Dgroups=smoke      # just one group
 
 Groups: `smoke`, `sanity`, `regression`, `e2e`, `known-issues`.
 
-Values in `config.properties` (`baseUrl`, `username`, `password`) can be overridden from the command line, e.g. `mvn clean test -DbaseUrl=https://my-staging-url`. If a key is missing, the run stops with an error that says which key.
+Values in `config.properties` (`baseUrl`, `username`, `password`) can be overridden from the command line, e.g. `mvn clean test -DbaseUrl=https://my-staging-url`. If a key is missing, setup fails with an error that names the key, instead of a confusing `null` later on.
 
 ## Reports
 
@@ -90,8 +90,9 @@ The plain TestNG reports are in `target/surefire-reports/`.
 - Price 0, a 255-character name, Unicode names
 - No `additionalneeds`
 - Checkout before checkin
-- Filters with no results
+- Filter by checkin date, and a name filter with no results
 - Basic auth instead of a cookie token
+- PATCH on a booking that doesn't exist
 - Deleting the same booking twice
 - Wrong `Content-Type`
 - Login responds in under 3 seconds
@@ -118,9 +119,10 @@ Restful-Booker has a few bugs. Where the real behaviour is wrong, the test asser
 - `totalprice: "abc"` is accepted and saved as `null`; `depositpaid: "yes"` is saved as `true`
 - PATCH on a missing booking and a second DELETE return **405** instead of 404
 - No validation that checkout is after checkin
+- A `text/plain` body returns **500** instead of 400/415
 - `/ping` returns 201, and a failed login returns 200
 
-The four worst ones are in their own `known-issues` group, so they can be run (or skipped) separately.
+Four of these cases (missing firstname, empty body, price `"abc"`, depositpaid `"yes"`) are in their own `known-issues` group, so they can be run (or skipped) separately.
 
 ## Design decisions
 
@@ -132,7 +134,7 @@ Some choices I made and why:
 
 - **Retry once on failure.** The public API sometimes resets its data or responds slowly, which made a few runs fail for no real reason. A listener retries a failed test once. A real bug still fails twice and shows up in the report, so it doesn't hide anything.
 
-- **Parallel runs (4 threads).** This took the suite from about 100s down to about 40s. Each class runs on its own thread, and the methods inside a class still run in order, so the CRUD chain still works.
+- **Parallel runs (4 threads).** This took the suite from about 100s down to about 40s. Up to 4 test classes run at the same time, while the methods inside one class still run in order on one thread, so the CRUD chain still works.
 
 - **Asserting the API's real behaviour.** If the test expected the "correct" status code, the suite would always be red and nobody would notice a new failure. Instead the current behaviour is asserted and commented, and the worst cases are grouped under `known-issues`.
 
