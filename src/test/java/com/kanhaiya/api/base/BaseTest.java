@@ -26,12 +26,17 @@ public class BaseTest {
     // Max time (ms) to wait for the server to connect or reply before the request fails
     private static final int TIMEOUT_MS = 15_000;
 
-    // alwaysRun = true so setup still runs when tests are filtered by group
+    // Runs once for the whole run (not per class), so parallel classes never change
+    // the shared global RestAssured config at the same time.
+    // Prints request + response details only when a validation fails (keeps logs clean).
+    static {
+        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
+
+    // alwaysRun = true so setup still runs when tests are filtered by group.
+    // requestSpec and token are per class instance, so parallel classes don't share them.
     @BeforeClass(alwaysRun = true)
     public void setUp() {
-        // Print request + response details only when a validation fails (keeps logs clean)
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-
         // Start from the global config (keeps the logging setting above) and add timeouts
         RestAssuredConfig timeoutConfig = RestAssured.config()
                 .httpClient(HttpClientConfig.httpClientConfig()
