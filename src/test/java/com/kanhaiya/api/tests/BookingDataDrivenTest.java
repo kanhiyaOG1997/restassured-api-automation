@@ -8,7 +8,6 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -50,32 +49,10 @@ public class BookingDataDrivenTest extends BaseTest {
     @Test(groups = "regression", dataProvider = "validBookings",
             description = "Valid booking variations are saved exactly as sent")
     public void validBookingRoundTrip(String caseName, Booking sent) {
-        int id = given()
-                .spec(requestSpec)
-                .body(sent)
-        .when()
-                .post("/booking")
-        .then()
-                .statusCode(200)
-                .extract().path("bookingid");
+        int id = createBooking(sent);                   // shared helper from BaseTest
 
         // Read it back and compare every field
-        Booking saved = given()
-                .spec(requestSpec)
-                .pathParam("id", id)
-        .when()
-                .get("/booking/{id}")
-        .then()
-                .statusCode(200)
-                .extract().as(Booking.class);
-
-        Assert.assertEquals(saved.getFirstname(), sent.getFirstname(), caseName);
-        Assert.assertEquals(saved.getLastname(), sent.getLastname(), caseName);
-        Assert.assertEquals(saved.getTotalprice(), sent.getTotalprice(), caseName);
-        Assert.assertEquals(saved.isDepositpaid(), sent.isDepositpaid(), caseName);
-        Assert.assertEquals(saved.getBookingdates().getCheckin(), sent.getBookingdates().getCheckin(), caseName);
-        Assert.assertEquals(saved.getBookingdates().getCheckout(), sent.getBookingdates().getCheckout(), caseName);
-        Assert.assertEquals(saved.getAdditionalneeds(), sent.getAdditionalneeds(), caseName);
+        assertSameBooking(getBooking(id), sent);
     }
 
     // ---------- Malformed JSON body is rejected with 400 ----------
