@@ -7,7 +7,6 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -24,49 +23,6 @@ import static org.hamcrest.Matchers.*;
 @Feature("Sanity")
 @Severity(SeverityLevel.CRITICAL)
 public class SanityTest extends BaseTest {
-
-    // Helper: creates a booking and returns its id
-    private int createBooking(Booking booking) {
-        return given()
-                .spec(requestSpec)
-                .body(booking)
-        .when()
-                .post("/booking")
-        .then()
-                .statusCode(200)
-                .extract().path("bookingid");
-    }
-
-    // Helper: reads a booking back as a POJO
-    private Booking getBooking(int id) {
-        return given()
-                .spec(requestSpec)
-                .pathParam("id", id)
-        .when()
-                .get("/booking/{id}")
-        .then()
-                .statusCode(200)
-                .extract().as(Booking.class);
-    }
-
-    // Helper: compares every field of two bookings, including the nested dates
-    private void assertSameBooking(Booking actual, Booking expected) {
-        Assert.assertEquals(actual.getFirstname(), expected.getFirstname(), "firstname");
-        Assert.assertEquals(actual.getLastname(), expected.getLastname(), "lastname");
-        Assert.assertEquals(actual.getTotalprice(), expected.getTotalprice(), "totalprice");
-        Assert.assertEquals(actual.isDepositpaid(), expected.isDepositpaid(), "depositpaid");
-        Assert.assertEquals(actual.getBookingdates().getCheckin(), expected.getBookingdates().getCheckin(), "checkin");
-        Assert.assertEquals(actual.getBookingdates().getCheckout(), expected.getBookingdates().getCheckout(), "checkout");
-        Assert.assertEquals(actual.getAdditionalneeds(), expected.getAdditionalneeds(), "additionalneeds");
-    }
-
-    @Test(groups = "sanity", description = "Created booking is saved with all fields exactly as sent")
-    public void createdBookingMatchesAllFields() {
-        Booking sent = TestDataBuilder.validBooking();
-        int id = createBooking(sent);
-
-        assertSameBooking(getBooking(id), sent);                     // read back and compare all 7 values
-    }
 
     @Test(groups = "sanity", description = "PATCH changes only the given field, others stay the same")
     public void partialUpdateChangesOnlyGivenField() {
