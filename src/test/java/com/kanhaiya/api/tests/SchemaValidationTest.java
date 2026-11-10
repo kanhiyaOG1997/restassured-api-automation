@@ -3,6 +3,10 @@ package com.kanhaiya.api.tests;
 import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.utils.ConfigReader;
 import com.kanhaiya.api.utils.TestDataBuilder;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -15,6 +19,10 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
  * (required fields, data types, date format, no unexpected fields), not just values.
  * Schema files live in src/test/resources/schemas/.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Schema Validation")
+@Severity(SeverityLevel.NORMAL)
 public class SchemaValidationTest extends BaseTest {
 
     // Helper: creates a booking and returns its id

@@ -3,6 +3,10 @@ package com.kanhaiya.api.tests;
 import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.utils.TestDataBuilder;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -15,6 +19,10 @@ import static org.hamcrest.Matchers.*;
  * Sanity tests: each main feature works correctly, one feature per test.
  * Every test creates its own data, so they can run in any order.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Sanity")
+@Severity(SeverityLevel.CRITICAL)
 public class SanityTest extends BaseTest {
 
     // Helper: creates a booking and returns its id

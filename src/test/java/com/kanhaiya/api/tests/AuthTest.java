@@ -2,6 +2,10 @@ package com.kanhaiya.api.tests;
 
 import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.utils.ConfigReader;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -12,8 +16,13 @@ import static org.hamcrest.Matchers.*;
 /**
  * Tests for the authentication endpoint: POST /auth
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Authentication")
+@Severity(SeverityLevel.CRITICAL)
 public class AuthTest extends BaseTest {
 
+    @Severity(SeverityLevel.BLOCKER)   // smoke test: nothing works without login
     @Test(groups = "smoke", description = "Valid credentials should return a token")
     public void validLoginReturnsToken() {
         given()

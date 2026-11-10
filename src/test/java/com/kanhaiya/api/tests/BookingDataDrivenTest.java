@@ -4,6 +4,10 @@ import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.models.BookingDates;
 import com.kanhaiya.api.utils.ConfigReader;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -18,6 +22,10 @@ import static org.hamcrest.Matchers.*;
  * Data-driven tests: one test method runs once per row of its @DataProvider.
  * Adding a new case = adding one row, no new test code.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Data-Driven")
+@Severity(SeverityLevel.NORMAL)
 public class BookingDataDrivenTest extends BaseTest {
 
     // ---------- Valid bookings: create, then GET returns the same data ----------
@@ -157,6 +165,7 @@ public class BookingDataDrivenTest extends BaseTest {
         };
     }
 
+    @Severity(SeverityLevel.MINOR)   // documents existing API bugs
     @Test(groups = {"regression", "known-issues"}, dataProvider = "knownIssues",
             description = "Documents known API bugs in booking validation")
     public void knownValidationIssues(String caseName, Map<String, Object> body,
