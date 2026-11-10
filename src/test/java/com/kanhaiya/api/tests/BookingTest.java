@@ -17,7 +17,7 @@ public class BookingTest extends BaseTest {
 
     private int bookingId;   // saved after create, reused by the next tests
 
-    @Test(priority = 1, description = "Create a booking - POST /booking")
+    @Test(priority = 1, groups = "smoke", description = "Create a booking - POST /booking")
     public void createBooking() {
         Booking booking = new Booking("Kanhaiya", "Tester", 1500, true,
                 new BookingDates("2026-12-01", "2026-12-05"), "Breakfast");
