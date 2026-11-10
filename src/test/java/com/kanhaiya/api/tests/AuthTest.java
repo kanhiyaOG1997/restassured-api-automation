@@ -48,7 +48,8 @@ public class AuthTest extends BaseTest {
         .when()
                 .post("/auth")
         .then()
-                .statusCode(200)                        // this API returns 200 even for wrong login
+                // Known API behaviour: a failed login returns 200 instead of 401
+                .statusCode(200)
                 .body("reason", equalTo("Bad credentials"))
                 .body("token", nullValue());            // no token should be given
     }

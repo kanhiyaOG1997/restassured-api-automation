@@ -2,142 +2,148 @@
 
 ![API Tests](https://github.com/kanhiyaOG1997/restassured-api-automation/actions/workflows/api-tests.yml/badge.svg)
 
-**Live test report:** https://kanhiyaog1997.github.io/restassured-api-automation (Allure, updated on every push to `main`)
+An API test automation framework I built for the public [Restful-Booker API](https://restful-booker.herokuapp.com), using RestAssured, TestNG and Maven.
 
-API test automation framework for the public [Restful-Booker API](https://restful-booker.herokuapp.com), built with **RestAssured**, **TestNG** and **Maven**.
+Live Allure report (updated on every push to `main`): https://kanhiyaog1997.github.io/restassured-api-automation
 
-## Tech Stack
+## Tech stack
 
-| Tool | Purpose |
+| Tool | What I use it for |
 |---|---|
-| Java 21 | Programming language |
-| RestAssured 5.5 | Sending HTTP requests and validating responses |
-| TestNG 7.10 | Test runner (priority, dependencies, assertions) |
-| Jackson | POJO to JSON serialization and deserialization |
-| Maven | Build and dependency management |
-| Allure 2 | HTML report with every request and response attached |
-| GitHub Actions | CI: runs tests on every push |
+| Java 21 | Language |
+| RestAssured 5.5 | Sending requests and validating responses |
+| TestNG 7.10 | Test runner, groups, data providers, parallel runs |
+| Jackson | Converting POJOs to JSON and back |
+| Maven | Build and dependencies |
+| Allure 2 | HTML report with each request and response attached |
+| GitHub Actions | Runs the suite on every push to `main` and on every pull request |
 
-## Project Structure
+## Project structure
 
 ```
 src/test/java/com/kanhaiya/api
-├── base/BaseTest.java        # Common setup: request spec, 15s timeout, auth token
-├── listeners/                # RetryAnalyzer + RetryListener (retry failed tests once)
-├── utils/ConfigReader.java   # Reads config.properties
-├── utils/TestDataBuilder.java # Random valid booking data
-├── models/                   # POJOs: Booking, BookingDates
+├── base/BaseTest.java           # request spec, timeout, token, shared helpers
+├── listeners/                   # retry a failed test once
+├── models/                      # Booking, BookingDates (POJOs)
+├── utils/ConfigReader.java      # reads config, supports -D overrides
+├── utils/TestDataBuilder.java   # random valid booking data
 └── tests/
-    ├── AuthTest.java         # POST /auth tests
-    ├── SmokeTest.java        # API is up, main endpoints answer
-    ├── BookingTest.java      # CRUD flow + negative test
-    ├── BookingEdgeCaseTest.java # Boundary values, filters, known API quirks
-    ├── SanityTest.java       # Each feature works correctly (PATCH, filters, auth)
-    ├── SchemaValidationTest.java  # Response structure vs JSON schemas
-    ├── BookingDataDrivenTest.java # @DataProvider-driven cases + known API issues
-    └── BookingE2ETest.java   # Full user journeys across endpoints
-src/test/resources/config.properties   # Base URL and credentials
-src/test/resources/schemas/            # JSON schema files
-testng.xml                              # Test suite
-.github/workflows/api-tests.yml         # CI pipeline
+    ├── SmokeTest.java
+    ├── AuthTest.java
+    ├── BookingTest.java
+    ├── SanityTest.java
+    ├── BookingEdgeCaseTest.java
+    ├── SchemaValidationTest.java
+    ├── BookingDataDrivenTest.java
+    └── BookingE2ETest.java
+
+src/test/resources/config.properties   # base URL and credentials
+src/test/resources/schemas/            # JSON schemas
+testng.xml                             # suite, parallel setup, retry listener
+.github/workflows/api-tests.yml        # CI
 ```
 
-## How to Run
+## Running the tests
 
 ```bash
-mvn clean test                    # all tests
-mvn clean test -Dgroups=smoke     # only smoke (also: sanity, regression, e2e, known-issues)
-mvn clean test -DbaseUrl=https://other-env.example.com   # override any config value
+mvn clean test                     # everything
+mvn clean test -Dgroups=smoke      # just one group
 ```
 
-Any key in `config.properties` (`baseUrl`, `username`, `password`) can be overridden with `-Dkey=value`.
-A missing key fails fast with a clear error. Failed tests are retried once automatically.
+Groups: `smoke`, `sanity`, `regression`, `e2e`, `known-issues`.
+
+Values in `config.properties` (`baseUrl`, `username`, `password`) can be overridden from the command line, e.g. `mvn clean test -DbaseUrl=https://my-staging-url`. If a key is missing, setup fails with an error that names the key, instead of a confusing `null` later on.
 
 ## Reports
 
-**Allure** (recommended): every test shows its steps plus the full request and response.
+After a run you can open the Allure report locally:
 
 ```bash
-mvn clean test        # run tests, raw results go to target/allure-results
-mvn allure:serve      # build the report and open it in your browser
-mvn allure:report     # or save it to target/site/allure-maven-plugin
+mvn allure:serve
 ```
 
-The latest report from `main` is published to [GitHub Pages](https://kanhiyaog1997.github.io/restassured-api-automation).
-For pull requests, download the **allure-report** artifact from the workflow run, unzip it and serve the
-folder (e.g. `npx http-server` inside it). Opening the HTML file directly from disk shows an
-empty report because browsers block it from loading its data files.
+It shows every test with the full request and response, grouped by area and severity. `mvn allure:report` saves it to `target/site/allure-maven-plugin` instead.
 
-Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
+In CI the report from `main` is published to [GitHub Pages](https://kanhiyaog1997.github.io/restassured-api-automation). Pull requests only upload it as an `allure-report` artifact. If you download that one, serve the folder (for example `npx http-server`); opening the HTML file straight from disk shows an empty page.
 
-## Test Scenarios
+The plain TestNG reports are in `target/surefire-reports/`.
 
-**61 test runs** in total: 8 core, 12 edge cases, 3 smoke, 9 sanity, 4 end-to-end, 7 schema, 18 data-driven (4 methods).
+## What's tested
 
-| # | Test | Endpoint | Expected |
-|---|---|---|---|
-| 1 | Valid login returns token | POST /auth | 200, token present |
-| 2 | Wrong password | POST /auth | "Bad credentials" |
-| 3 | Create booking | POST /booking | 200, booking id returned |
-| 4 | Get booking | GET /booking/{id} | 200, data matches |
-| 5 | Update booking (with token) | PUT /booking/{id} | 200, data updated |
-| 6 | Delete booking (with token) | DELETE /booking/{id} | 201 |
-| 7 | Get deleted booking | GET /booking/{id} | 404 |
-| 8 | Update without token | PUT /booking/{id} | 403 |
-| 9 | depositpaid=false, no additionalneeds | POST /booking | 200 |
-| 10 | totalprice = 0 | POST /booking | 200, price echoed |
-| 11 | 255-char firstname | POST /booking | 200 |
-| 12 | Unicode name ("José Ñoño") | POST /booking | 200, name echoed |
-| 13 | Checkout before checkin | POST /booking | 200 (no date validation) |
-| 14 | Filter by checkin date | GET /booking?checkin= | 200, list |
-| 15 | Filter by unknown name | GET /booking?firstname= | 200, empty list |
-| 16 | Update with Basic auth header | PUT /booking/{id} | 200 |
-| 17 | PATCH non-existent booking | PATCH /booking/{id} | 405 |
-| 18 | Delete same booking twice | DELETE /booking/{id} | 201, then 405 |
-| 19 | Content-Type text/plain | POST /booking | not 200 (500) |
-| 20 | Auth response time | POST /auth | < 3 seconds |
-| 21 | Health check | GET /ping | 201 |
-| 22 | List all bookings | GET /booking | 200, non-empty list |
-| 23 | Get an existing booking | GET /booking/{id} | 200, firstname present |
-| 24 | PATCH changes only one field | PATCH /booking/{id} | 200, other fields unchanged |
-| 25 | PUT is saved | PUT + GET /booking/{id} | GET shows new values |
-| 26 | Filter by firstname + lastname | GET /booking?firstname=&lastname= | 200, booking found |
-| 27 | Filter by checkout date | GET /booking?checkout= | 200, list |
-| 28 | Get non-existent booking | GET /booking/{id} | 404 |
-| 29 | Delete without token | DELETE /booking/{id} | 403 |
-| 30 | PATCH without token | PATCH /booking/{id} | 403 |
-| 31 | PUT with invalid token | PUT /booking/{id} | 403 |
-| 32 | Content-Type header | GET /booking/{id} | application/json |
-| 33 | E2E: full guest journey | auth → create → search → get → patch → delete | 404 at the end |
-| 34 | E2E: change dates | PUT + GET /booking?checkin= | booking found by new date |
-| 35 | E2E: one token, many actions | PATCH + DELETE x2 | all succeed |
-| 36 | E2E: 3 bookings lifecycle | create x3 → filter → delete x3 → filter | 3 found, then 0 |
-| 37 | Auth token schema | POST /auth | matches auth-token.json |
-| 38 | Auth error schema | POST /auth | matches auth-error.json |
-| 39 | Create booking schema | POST /booking | matches create-booking-response.json |
-| 40 | Get booking schema | GET /booking/{id} | matches booking.json |
-| 41 | Booking id list schema | GET /booking | matches booking-ids.json |
-| 42 | PUT response schema | PUT /booking/{id} | matches booking.json |
-| 43 | PATCH response schema | PATCH /booking/{id} | matches booking.json |
-| 44–48 | Valid booking variations (5 rows) | POST + GET /booking | saved exactly as sent |
-| 49–52 | Malformed JSON (4 rows) | POST /booking | 400 |
-| 53–57 | Invalid login variations (5 rows) | POST /auth | "Bad credentials", no token |
-| 58–61 | Known API issues (4 rows, group `known-issues`) | POST /booking | 500 / wrong types accepted |
+61 test runs in total. The whole suite takes about 40 seconds.
 
-## Key Concepts Used
+**Smoke (3)**: the API answers at all. `GET /ping`, list bookings, fetch one booking.
 
-- **Request Specification** to reuse base URL and headers
-- **Request chaining**: booking id from create is used in get/update/delete
-- **POJO serialization/deserialization** with Jackson
-- **Config-driven** URLs and credentials, overridable with `-D` system properties
-- **Allure reporting** with request/response attachments (via `AllureRestAssured` filter)
-- **Allure labels**: `@Epic`/`@Feature` group tests by area, `@Severity` marks importance (smoke = blocker, known API bugs = minor)
-- **Parallel execution**: test blocks run on 4 threads (`parallel="tests"` in testng.xml), about 38s instead of 100s
-- **Retry once** on failure via a TestNG listener (handles flaky public API)
-- **Positive and negative** test cases
-- **Edge cases** with documented real API behaviour (`// Known API behaviour`)
-- **Groups**: `smoke`, `sanity`, `regression`, `e2e`, `known-issues`
-- **JSON schema validation** (required fields, types, `yyyy-MM-dd` date pattern, no extra fields)
-- **Data-driven tests** with TestNG `@DataProvider`
-- **Response-time** and header assertions
-- **CI** with GitHub Actions
+**Auth (2)**: valid login returns a token; a wrong password returns "Bad credentials".
+
+**Booking CRUD (6)**: one chained flow. Create → get → update → delete → confirm 404. Also checks that an update without a token returns 403.
+
+**Sanity (9)**:
+- PATCH changes only the field you send
+- PUT is actually saved (checked with a GET)
+- Filter by first + last name, and by checkout date
+- 404 for a booking that doesn't exist
+- 403 for DELETE/PATCH without a token and PUT with a bad token
+- `Content-Type` is JSON
+
+**Edge cases (12)**:
+- Price 0, a 255-character name, Unicode names
+- No `additionalneeds`
+- Checkout before checkin
+- Filter by checkin date, and a name filter with no results
+- Basic auth instead of a cookie token
+- PATCH on a booking that doesn't exist
+- Deleting the same booking twice
+- Wrong `Content-Type`
+- Login responds in under 3 seconds
+
+**Schema validation (7)**: auth (token and error), create, get, list, PUT and PATCH responses are checked against JSON schemas. Required fields, types, `yyyy-MM-dd` dates, and no unexpected fields.
+
+**Data-driven (18 runs, 4 methods)**:
+- 5 valid booking variations saved exactly as sent
+- 4 kinds of malformed JSON → 400
+- 5 invalid login variations
+- 4 known API bugs (see below)
+
+**End-to-end (4)**:
+- A full guest journey: login, create, search, view, edit, cancel
+- Changing dates and finding the booking by the new date
+- One token used for several actions
+- Creating 3 bookings, finding exactly 3, deleting them all
+
+### Known API bugs
+
+Restful-Booker has a few bugs. Where the real behaviour is wrong, the test asserts what the API actually does and has a `// Known API behaviour` comment, so the suite stays green and the bug is still written down:
+
+- A missing `firstname` or an empty `{}` body returns **500** instead of 400
+- `totalprice: "abc"` is accepted and saved as `null`; `depositpaid: "yes"` is saved as `true`
+- PATCH on a missing booking and a second DELETE return **405** instead of 404
+- No validation that checkout is after checkin
+- A `text/plain` body returns **500** instead of 400/415
+- `/ping` returns 201, and a failed login returns 200
+
+Four of these cases (missing firstname, empty body, price `"abc"`, depositpaid `"yes"`) are in their own `known-issues` group, so they can be run (or skipped) separately.
+
+## Design decisions
+
+Some choices I made and why:
+
+- **Tests create their own data.** Apart from the CRUD chain in `BookingTest` (which is chained on purpose) and the smoke tests (which only read), every test creates the booking it needs. So tests don't depend on each other or on other people's data, and that's also what makes running them in parallel safe.
+
+- **Random test data.** Restful-Booker is shared by lots of people, so fixed names would clash with other people's bookings. `TestDataBuilder` generates fresh values each time. Tests that search by name use a unique suffix.
+
+- **Retry once on failure.** The public API sometimes resets its data or responds slowly, which made a few runs fail for no real reason. A listener retries a failed test once. A real bug still fails twice and shows up in the report, so it doesn't hide anything.
+
+- **Parallel runs (4 threads).** This took the suite from about 100s down to about 40s. Up to 4 test classes run at the same time, while the methods inside one class still run in order on one thread, so the CRUD chain still works.
+
+- **Asserting the API's real behaviour.** If the test expected the "correct" status code, the suite would always be red and nobody would notice a new failure. Instead the current behaviour is asserted and commented, and the worst cases are grouped under `known-issues`.
+
+- **15 second timeout.** Without it a hung request can block the whole run for minutes. With it, the test fails with a clear timeout and the rest keep going.
+
+- **Config outside the code, with `-D` overrides.** No URLs or passwords in test classes. CI or another environment can change the base URL without editing files.
+
+- **Schema validation on top of value checks.** Value checks only look at the fields I picked. A schema catches a missing field, a wrong type or a new field anywhere in the response.
+
+- **Shared helpers in `BaseTest`.** `createBooking`, `getBooking` and `assertSameBooking` live in one place, because they were being copied into several test classes.
+
+- **Allure with request/response logging.** When something fails in CI, I can see exactly what was sent and what came back, without re-running it locally.
