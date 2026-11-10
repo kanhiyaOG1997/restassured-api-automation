@@ -1,5 +1,9 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Restful Booker API Suite" verbose="1">
+    <!-- Re-run any failed test once to avoid false failures from the public API -->
+    <listeners>
+        <listener class-name="com.kanhaiya.api.listeners.RetryListener"/>
+    </listeners>
     <test name="Smoke Tests">
         <classes>
             <class name="com.kanhaiya.api.tests.SmokeTest"/>

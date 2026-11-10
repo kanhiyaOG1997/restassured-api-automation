@@ -1,6 +1,7 @@
 package com.kanhaiya.api.tests;
 
 import com.kanhaiya.api.base.BaseTest;
+import com.kanhaiya.api.utils.ConfigReader;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -17,7 +18,9 @@ public class AuthTest extends BaseTest {
     public void validLoginReturnsToken() {
         given()
                 .spec(requestSpec)
-                .body(Map.of("username", "admin", "password", "password123"))
+                .body(Map.of(
+                        "username", ConfigReader.get("username"),       // credentials from config
+                        "password", ConfigReader.get("password")))
         .when()
                 .post("/auth")
         .then()
@@ -31,7 +34,9 @@ public class AuthTest extends BaseTest {
     public void invalidLoginReturnsBadCredentials() {
         given()
                 .spec(requestSpec)
-                .body(Map.of("username", "admin", "password", "wrongPassword"))
+                .body(Map.of(
+                        "username", ConfigReader.get("username"),
+                        "password", "wrongPassword"))                  // deliberately wrong
         .when()
                 .post("/auth")
         .then()

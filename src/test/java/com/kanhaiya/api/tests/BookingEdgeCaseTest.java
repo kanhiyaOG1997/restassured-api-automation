@@ -3,11 +3,14 @@ package com.kanhaiya.api.tests;
 import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.models.BookingDates;
+import com.kanhaiya.api.utils.ConfigReader;
 import com.kanhaiya.api.utils.TestDataBuilder;
 import io.restassured.http.ContentType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +33,12 @@ public class BookingEdgeCaseTest extends BaseTest {
         .then()
                 .statusCode(200)
                 .extract().path("bookingid");
+    }
+
+    // Helper: builds the Base64 part of a Basic auth header from config credentials
+    private String basicAuthValue() {
+        String credentials = ConfigReader.get("username") + ":" + ConfigReader.get("password");
+        return Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test(groups = "regression", description = "depositpaid=false and no additionalneeds is accepted")
@@ -159,8 +168,8 @@ public class BookingEdgeCaseTest extends BaseTest {
 
         given()
                 .spec(requestSpec)
-                // Base64 of "admin:password123" - an alternative to the Cookie token
-                .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQxMjM=")
+                // Basic auth = "Basic " + Base64("username:password"), an alternative to the Cookie token
+                .header("Authorization", "Basic " + basicAuthValue())
                 .pathParam("id", id)
                 .body(updated)
         .when()
@@ -227,7 +236,9 @@ public class BookingEdgeCaseTest extends BaseTest {
     public void authResponseTime() {
         given()
                 .spec(requestSpec)
-                .body(Map.of("username", "admin", "password", "password123"))
+                .body(Map.of(
+                        "username", ConfigReader.get("username"),
+                        "password", ConfigReader.get("password")))
         .when()
                 .post("/auth")
         .then()
