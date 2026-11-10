@@ -2,6 +2,8 @@
 
 ![API Tests](https://github.com/kanhiyaOG1997/restassured-api-automation/actions/workflows/api-tests.yml/badge.svg)
 
+**Live test report:** https://kanhiyaog1997.github.io/restassured-api-automation (Allure, updated on every push to `main`)
+
 API test automation framework for the public [Restful-Booker API](https://restful-booker.herokuapp.com), built with **RestAssured**, **TestNG** and **Maven**.
 
 ## Tech Stack
@@ -61,7 +63,8 @@ mvn allure:serve      # build the report and open it in your browser
 mvn allure:report     # or save it to target/site/allure-maven-plugin
 ```
 
-In CI, download the **allure-report** artifact from the workflow run, unzip it and serve the
+The latest report from `main` is published to [GitHub Pages](https://kanhiyaog1997.github.io/restassured-api-automation), with trend charts across runs.
+For pull requests, download the **allure-report** artifact from the workflow run, unzip it and serve the
 folder (e.g. `npx http-server` inside it). Opening the HTML file directly from disk shows an
 empty report because browsers block it from loading its data files.
 
