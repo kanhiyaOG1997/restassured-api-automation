@@ -10,4 +10,9 @@
             <class name="com.kanhaiya.api.tests.BookingTest"/>
         </classes>
     </test>
+    <test name="Booking Edge Case Tests">
+        <classes>
+            <class name="com.kanhaiya.api.tests.BookingEdgeCaseTest"/>
+        </classes>
+    </test>
 </suite>

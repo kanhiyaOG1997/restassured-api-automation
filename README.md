@@ -21,10 +21,12 @@ API test automation framework for the public [Restful-Booker API](https://restfu
 src/test/java/com/kanhaiya/api
 ├── base/BaseTest.java        # Common setup: request spec, auth token
 ├── utils/ConfigReader.java   # Reads config.properties
+├── utils/TestDataBuilder.java # Random valid booking data
 ├── models/                   # POJOs: Booking, BookingDates
 └── tests/
     ├── AuthTest.java         # POST /auth tests
-    └── BookingTest.java      # CRUD flow + negative test
+    ├── BookingTest.java      # CRUD flow + negative test
+    └── BookingEdgeCaseTest.java # Boundary values, filters, known API quirks
 src/test/resources/config.properties   # Base URL and credentials
 testng.xml                              # Test suite
 .github/workflows/api-tests.yml         # CI pipeline
@@ -40,6 +42,8 @@ Reports are generated in `target/surefire-reports/`.
 
 ## Test Scenarios
 
+**20 tests** in total (8 core + 12 edge cases).
+
 | # | Test | Endpoint | Expected |
 |---|---|---|---|
 | 1 | Valid login returns token | POST /auth | 200, token present |
@@ -50,6 +54,18 @@ Reports are generated in `target/surefire-reports/`.
 | 6 | Delete booking (with token) | DELETE /booking/{id} | 201 |
 | 7 | Get deleted booking | GET /booking/{id} | 404 |
 | 8 | Update without token | PUT /booking/{id} | 403 |
+| 9 | depositpaid=false, no additionalneeds | POST /booking | 200 |
+| 10 | totalprice = 0 | POST /booking | 200, price echoed |
+| 11 | 255-char firstname | POST /booking | 200 |
+| 12 | Unicode name ("José Ñoño") | POST /booking | 200, name echoed |
+| 13 | Checkout before checkin | POST /booking | 200 (no date validation) |
+| 14 | Filter by checkin date | GET /booking?checkin= | 200, list |
+| 15 | Filter by unknown name | GET /booking?firstname= | 200, empty list |
+| 16 | Update with Basic auth header | PUT /booking/{id} | 200 |
+| 17 | PATCH non-existent booking | PATCH /booking/{id} | 405 |
+| 18 | Delete same booking twice | DELETE /booking/{id} | 201, then 405 |
+| 19 | Content-Type text/plain | POST /booking | not 200 (500) |
+| 20 | Auth response time | POST /auth | < 3 seconds |
 
 ## Key Concepts Used
 
@@ -58,4 +74,6 @@ Reports are generated in `target/surefire-reports/`.
 - **POJO serialization/deserialization** with Jackson
 - **Config-driven** test data (no hard-coded URLs)
 - **Positive and negative** test cases
+- **Edge cases** with documented real API behaviour (`// Known API behaviour`)
+- **Groups** (`regression`) and response-time assertions
 - **CI** with GitHub Actions
