@@ -133,6 +133,7 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 - **Config-driven** URLs and credentials, overridable with `-D` system properties
 - **Allure reporting** with request/response attachments (via `AllureRestAssured` filter)
 - **Allure labels**: `@Epic`/`@Feature` group tests by area, `@Severity` marks importance (smoke = blocker, known API bugs = minor)
+- **Parallel execution**: test blocks run on 4 threads (`parallel="tests"` in testng.xml), about 38s instead of 100s
 - **Retry once** on failure via a TestNG listener (handles flaky public API)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
