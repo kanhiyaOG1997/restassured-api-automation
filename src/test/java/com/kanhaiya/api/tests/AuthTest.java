@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class AuthTest extends BaseTest {
 
-    @Test(description = "Valid credentials should return a token")
+    @Test(groups = "smoke", description = "Valid credentials should return a token")
     public void validLoginReturnsToken() {
         given()
                 .spec(requestSpec)

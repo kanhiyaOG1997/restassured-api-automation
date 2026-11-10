@@ -25,8 +25,11 @@ src/test/java/com/kanhaiya/api
 ├── models/                   # POJOs: Booking, BookingDates
 └── tests/
     ├── AuthTest.java         # POST /auth tests
+    ├── SmokeTest.java        # API is up, main endpoints answer
     ├── BookingTest.java      # CRUD flow + negative test
-    └── BookingEdgeCaseTest.java # Boundary values, filters, known API quirks
+    ├── BookingEdgeCaseTest.java # Boundary values, filters, known API quirks
+    ├── SanityTest.java       # Each feature works correctly (PATCH, filters, auth)
+    └── BookingE2ETest.java   # Full user journeys across endpoints
 src/test/resources/config.properties   # Base URL and credentials
 testng.xml                              # Test suite
 .github/workflows/api-tests.yml         # CI pipeline
@@ -35,14 +38,15 @@ testng.xml                              # Test suite
 ## How to Run
 
 ```bash
-mvn clean test
+mvn clean test                    # all tests
+mvn clean test -Dgroups=smoke     # only smoke (also: sanity, regression, e2e)
 ```
 
 Reports are generated in `target/surefire-reports/`.
 
 ## Test Scenarios
 
-**20 tests** in total (8 core + 12 edge cases).
+**37 tests** in total: 8 core, 12 edge cases, 3 smoke, 10 sanity, 4 end-to-end.
 
 | # | Test | Endpoint | Expected |
 |---|---|---|---|
@@ -66,6 +70,23 @@ Reports are generated in `target/surefire-reports/`.
 | 18 | Delete same booking twice | DELETE /booking/{id} | 201, then 405 |
 | 19 | Content-Type text/plain | POST /booking | not 200 (500) |
 | 20 | Auth response time | POST /auth | < 3 seconds |
+| 21 | Health check | GET /ping | 201 |
+| 22 | List all bookings | GET /booking | 200, non-empty list |
+| 23 | Get an existing booking | GET /booking/{id} | 200, firstname present |
+| 24 | Created booking matches all fields | POST + GET /booking | all 7 values match |
+| 25 | PATCH changes only one field | PATCH /booking/{id} | 200, other fields unchanged |
+| 26 | PUT is saved | PUT + GET /booking/{id} | GET shows new values |
+| 27 | Filter by firstname + lastname | GET /booking?firstname=&lastname= | 200, booking found |
+| 28 | Filter by checkout date | GET /booking?checkout= | 200, list |
+| 29 | Get non-existent booking | GET /booking/{id} | 404 |
+| 30 | Delete without token | DELETE /booking/{id} | 403 |
+| 31 | PATCH without token | PATCH /booking/{id} | 403 |
+| 32 | PUT with invalid token | PUT /booking/{id} | 403 |
+| 33 | Content-Type header | GET /booking/{id} | application/json |
+| 34 | E2E: full guest journey | auth → create → search → get → patch → delete | 404 at the end |
+| 35 | E2E: change dates | PUT + GET /booking?checkin= | booking found by new date |
+| 36 | E2E: one token, many actions | PATCH + DELETE x2 | all succeed |
+| 37 | E2E: 3 bookings lifecycle | create x3 → filter → delete x3 → filter | 3 found, then 0 |
 
 ## Key Concepts Used
 
@@ -75,5 +96,6 @@ Reports are generated in `target/surefire-reports/`.
 - **Config-driven** test data (no hard-coded URLs)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
-- **Groups** (`regression`) and response-time assertions
+- **Groups**: `smoke`, `sanity`, `regression`, `e2e`
+- **Response-time** and header assertions
 - **CI** with GitHub Actions
