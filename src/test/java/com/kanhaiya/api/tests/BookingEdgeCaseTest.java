@@ -6,6 +6,10 @@ import com.kanhaiya.api.models.BookingDates;
 import com.kanhaiya.api.utils.ConfigReader;
 import com.kanhaiya.api.utils.TestDataBuilder;
 import io.restassured.http.ContentType;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -21,6 +25,10 @@ import static org.hamcrest.Matchers.*;
  * Edge cases and boundary values for the booking API.
  * Every test is independent: it creates its own booking when it needs one.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Edge Cases")
+@Severity(SeverityLevel.NORMAL)
 public class BookingEdgeCaseTest extends BaseTest {
 
     // Helper: creates a booking and returns its id

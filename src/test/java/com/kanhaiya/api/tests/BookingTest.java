@@ -3,6 +3,10 @@ package com.kanhaiya.api.tests;
 import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.models.BookingDates;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -13,10 +17,15 @@ import static org.hamcrest.Matchers.*;
  * End-to-end CRUD flow for bookings. Tests run in order (priority) and share bookingId
  * (request chaining): the id created in test 1 is used by tests 2 to 5.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Booking CRUD")
+@Severity(SeverityLevel.CRITICAL)
 public class BookingTest extends BaseTest {
 
     private int bookingId;   // saved after create, reused by the next tests
 
+    @Severity(SeverityLevel.BLOCKER)   // smoke test: core create flow
     @Test(priority = 1, groups = "smoke", description = "Create a booking - POST /booking")
     public void createBooking() {
         Booking booking = new Booking("Kanhaiya", "Tester", 1500, true,
