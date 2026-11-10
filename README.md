@@ -132,6 +132,7 @@ Plain TestNG/Surefire reports are also in `target/surefire-reports/`.
 - **POJO serialization/deserialization** with Jackson
 - **Config-driven** URLs and credentials, overridable with `-D` system properties
 - **Allure reporting** with request/response attachments (via `AllureRestAssured` filter)
+- **Allure labels**: `@Epic`/`@Feature` group tests by area, `@Severity` marks importance (smoke = blocker, known API bugs = minor)
 - **Retry once** on failure via a TestNG listener (handles flaky public API)
 - **Positive and negative** test cases
 - **Edge cases** with documented real API behaviour (`// Known API behaviour`)
