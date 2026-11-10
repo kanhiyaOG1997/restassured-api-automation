@@ -1,5 +1,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Restful Booker API Suite" verbose="1">
+<!-- parallel="tests": each <test> block below runs on its own thread, 4 at a time.
+     Methods inside one class still run in order on one thread (BookingTest chain is safe). -->
+<suite name="Restful Booker API Suite" verbose="1" parallel="tests" thread-count="4">
     <!-- Re-run any failed test once to avoid false failures from the public API -->
     <listeners>
         <listener class-name="com.kanhaiya.api.listeners.RetryListener"/>
