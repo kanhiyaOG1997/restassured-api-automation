@@ -4,6 +4,10 @@ import com.kanhaiya.api.base.BaseTest;
 import com.kanhaiya.api.models.Booking;
 import com.kanhaiya.api.models.BookingDates;
 import com.kanhaiya.api.utils.TestDataBuilder;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -19,6 +23,10 @@ import static org.hamcrest.Matchers.*;
  * End-to-end tests: full user journeys that chain several API calls.
  * Each test is one complete journey and does not depend on any other test.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("End-to-End")
+@Severity(SeverityLevel.CRITICAL)
 public class BookingE2ETest extends BaseTest {
 
     // Helper: creates a booking and returns its id

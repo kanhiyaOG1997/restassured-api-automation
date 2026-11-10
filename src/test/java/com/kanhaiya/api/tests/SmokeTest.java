@@ -1,6 +1,10 @@
 package com.kanhaiya.api.tests;
 
 import com.kanhaiya.api.base.BaseTest;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -10,6 +14,10 @@ import static org.hamcrest.Matchers.*;
  * Smoke tests: quick checks that the API is up and the main endpoints answer.
  * Run these first - if they fail, there is no point running the rest.
  */
+// Allure labels: group this class in the report and set its default importance
+@Epic("Restful Booker API")
+@Feature("Smoke")
+@Severity(SeverityLevel.BLOCKER)
 public class SmokeTest extends BaseTest {
 
     @Test(groups = "smoke", description = "Health check - GET /ping")
